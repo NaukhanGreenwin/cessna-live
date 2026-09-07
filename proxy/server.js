@@ -32,9 +32,26 @@ const UPSTREAMS = [
 
 const KINDS = ['reg', 'hex', 'callsign'];
 const PARAM_RE = /^[A-Za-z0-9-]{2,12}$/;
+const COOLDOWN_MS = Number(process.env.UPSTREAM_COOLDOWN_MS) || 60000;
+const COOLDOWN_MAX_MS = 10 * 60 * 1000;
 
-const cache = new Map();    // key -> { until, status, body, upstream }
-const inflight = new Map(); // key -> Promise
+const cache = new Map();        // key -> { until, status, body, upstream }
+const inflight = new Map();     // key -> Promise
+const cooldownUntil = new Map(); // upstream name -> timestamp; a failing upstream is tried last for a while
+
+function trip(name, retryAfter) {
+  let ms = COOLDOWN_MS;
+  const ra = Number(retryAfter);
+  if (Number.isFinite(ra) && ra > 0) ms = Math.max(ms, ra * 1000);
+  cooldownUntil.set(name, Date.now() + Math.min(ms, COOLDOWN_MAX_MS));
+}
+
+function upstreamOrder() {
+  const now = Date.now();
+  const healthy = UPSTREAMS.filter((u) => (cooldownUntil.get(u.name) || 0) <= now);
+  const cooling = UPSTREAMS.filter((u) => (cooldownUntil.get(u.name) || 0) > now);
+  return healthy.concat(cooling); // cooling upstreams stay available as a last resort
+}
 
 function corsHeaders(extra) {
   return Object.assign({
@@ -63,7 +80,7 @@ function normalize(j) {
 
 async function fetchUpstream(kind, value) {
   const errors = [];
-  for (const up of UPSTREAMS) {
+  for (const up of upstreamOrder()) {
     const url = up.url(kind, value);
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
@@ -77,14 +94,18 @@ async function fetchUpstream(kind, value) {
         let j = null;
         try { j = JSON.parse(text); } catch (e) { j = null; }
         if (j && Array.isArray(j.ac)) {
+          cooldownUntil.delete(up.name);
           return { status: 200, body: JSON.stringify(normalize(j)), upstream: up.name };
         }
         errors.push(`${up.name}: unexpected body`);
+        trip(up.name, null);
       } else {
         errors.push(`${up.name}: HTTP ${r.status}`);
+        if (r.status === 429 || r.status === 403 || r.status >= 500) trip(up.name, r.headers.get('retry-after'));
       }
     } catch (e) {
       errors.push(`${up.name}: ${e && e.name === 'AbortError' ? 'timeout' : (e && e.message) || String(e)}`);
+      trip(up.name, null);
     } finally {
       clearTimeout(timer);
     }
