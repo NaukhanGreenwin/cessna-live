@@ -1,0 +1,14 @@
+{
+  "name": "cessna-live-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CORS proxy for public ADS-B JSON APIs, used by the Cessna Live page",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

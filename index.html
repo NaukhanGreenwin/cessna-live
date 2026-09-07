@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cessna Live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="description" content="Live position of one aircraft by registration, from public ADS-B data.">
+<meta name="theme-color" content="#0b0f14">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cessna Live">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-style="dark">
+
+<div id="map" aria-label="Map"></div>
+
+<header id="card" class="card">
+  <div class="card-top">
+    <div class="reg-block">
+      <div id="reg" class="reg">------</div>
+      <div id="type" class="type">Waiting for data</div>
+    </div>
+    <div id="status" class="status status-unknown">NO DATA</div>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <span class="label">Altitude</span>
+      <span id="alt" class="value">--</span>
+      <span class="unit">ft</span>
+    </div>
+    <div class="stat">
+      <span class="label">Speed</span>
+      <span id="gs" class="value">--</span>
+      <span class="unit">kt</span>
+    </div>
+    <div class="stat">
+      <span class="label">Track</span>
+      <span id="trk" class="value">--</span>
+      <span class="unit">deg</span>
+    </div>
+    <div class="stat">
+      <span class="label">Vert rate</span>
+      <span id="vr" class="value">--</span>
+      <span class="unit">ft/min</span>
+    </div>
+  </div>
+  <div class="card-foot">
+    <span id="age">Last position: --</span>
+    <span id="source" class="muted"></span>
+  </div>
+</header>
+
+<div id="msg" class="msg hidden" role="status" aria-live="polite"></div>
+
+<nav class="controls" aria-label="Controls">
+  <button id="followBtn" class="btn active" type="button" aria-pressed="true">Follow: On</button>
+  <button id="styleBtn" class="btn" type="button">Map: Dark</button>
+  <button id="changeBtn" class="btn" type="button">Aircraft</button>
+</nav>
+
+<div id="setup" class="setup hidden">
+  <form id="regForm" class="setup-card" autocomplete="off">
+    <h1>Cessna Live</h1>
+    <p>Enter the registration of the aircraft to follow.</p>
+    <label for="regInput" class="sr-only">Registration</label>
+    <input id="regInput" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="C-XXXX" maxlength="12" aria-describedby="regHint">
+    <div class="setup-actions">
+      <button type="submit" class="btn primary">Save</button>
+      <button type="button" id="cancelBtn" class="btn hidden">Cancel</button>
+    </div>
+    <p id="regHint" class="hint">Saved on this device. You can also open the page as ?reg=C-XXXX.</p>
+  </form>
+</div>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
