@@ -6,7 +6,7 @@ A phone-first page that shows the live position of one aircraft, looked up by re
 - Card with registration, status (airborne, on ground, not seen), altitude, ground speed, track, vertical rate and the age of the last position
 - Aircraft icon rotated to its track, trail of the last 200 positions in this session
 - Follow toggle, 5 second polling with back-off on errors
-- Registration saved on the device, or passed as `?reg=C-XXXX`
+- Default registration set by `DEFAULT_REG` in `app.js`, pre-filled on first open; the Aircraft button or `?reg=C-XXXX` overrides it and the choice is saved on the device
 - Web manifest and Apple touch icon so it can be added to the home screen
 
 ## Data

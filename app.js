@@ -3,6 +3,7 @@
 
   // ---- configuration --------------------------------------------------------
   var DEFAULT_API = 'https://cessna-live-api.onrender.com';
+  var DEFAULT_REG = 'C-GQYT';    // shown on first open; the Aircraft button or ?reg= overrides it
   var POLL_MS = 5000;
   var MIN_BACKOFF_MS = 5000;
   var MAX_BACKOFF_MS = 60000;
@@ -297,9 +298,9 @@
   }
   function validReg(s) { return /^[A-Z0-9-]{2,12}$/.test(s); }
 
-  function setReg(reg) {
+  function setReg(reg, persist) {
     state.reg = reg;
-    lsSet(LS.reg, reg);
+    if (persist !== false) lsSet(LS.reg, reg);
     document.title = reg + ' | Cessna Live';
     resetTrack();
     state.backoff = MIN_BACKOFF_MS;
@@ -356,5 +357,5 @@
   var savedReg = normalizeReg(lsGet(LS.reg));
   if (urlReg && validReg(urlReg)) setReg(urlReg);
   else if (savedReg && validReg(savedReg)) setReg(savedReg);
-  else showSetup(false);
+  else setReg(DEFAULT_REG, false);
 })();
