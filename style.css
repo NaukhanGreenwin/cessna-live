@@ -39,6 +39,11 @@ html, body {
 }
 body[data-style="light"] #map { background: #dfe6ee; }
 
+/* Dark map: invert the standard OpenStreetMap tiles, keep labels readable. */
+body[data-style="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) saturate(0.55) brightness(0.82) contrast(1.08);
+}
+
 /* ---- top card ------------------------------------------------------------ */
 .card {
   position: fixed;

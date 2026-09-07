@@ -52,25 +52,15 @@
   map.setView([43.86, -79.37], 9);
 
   var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-  var TILES = {
-    dark: {
-      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      opts: { maxZoom: 19, subdomains: 'abcd', attribution: OSM_ATTR + ' &copy; <a href="https://carto.com/attributions">CARTO</a>' }
-    },
-    light: {
-      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      opts: { maxZoom: 19, attribution: OSM_ATTR }
-    }
-  };
+  // One tile source: OpenStreetMap standard tiles. Dark mode is a CSS filter on the
+  // tile pane (see style.css), so no tile provider API key is needed.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: OSM_ATTR }).addTo(map);
   var TRAIL_COLOR = { dark: '#4cc9f0', light: '#0077b6' };
-  var tileLayer = null;
 
   function applyStyle(name) {
-    if (!TILES[name]) name = 'dark';
+    if (name !== 'light') name = 'dark';
     state.style = name;
     lsSet(LS.style, name);
-    if (tileLayer) map.removeLayer(tileLayer);
-    tileLayer = L.tileLayer(TILES[name].url, TILES[name].opts).addTo(map);
     document.body.setAttribute('data-style', name);
     el.styleBtn.textContent = 'Map: ' + (name === 'dark' ? 'Dark' : 'Light');
     trail.setStyle({ color: TRAIL_COLOR[name] });

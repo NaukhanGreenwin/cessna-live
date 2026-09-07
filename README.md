@@ -2,7 +2,7 @@
 
 A phone-first page that shows the live position of one aircraft, looked up by registration, from public ADS-B data.
 
-- Full-screen map (Leaflet, OpenStreetMap data, dark and light styles)
+- Full-screen map (Leaflet, OpenStreetMap tiles; the dark style is a CSS filter, so no tile API key is needed)
 - Card with registration, status (airborne, on ground, not seen), altitude, ground speed, track, vertical rate and the age of the last position
 - Aircraft icon rotated to its track, trail of the last 200 positions in this session
 - Follow toggle, 5 second polling with back-off on errors
@@ -34,4 +34,4 @@ Icons are generated with `python3 tools/make_icons.py` (needs Pillow).
 
 ## Licence
 
-MIT. Leaflet is BSD-2-Clause (vendored in `vendor/leaflet`). Map tiles: OpenStreetMap contributors, CARTO.
+MIT. Leaflet is BSD-2-Clause (vendored in `vendor/leaflet`). Map tiles: OpenStreetMap contributors.
